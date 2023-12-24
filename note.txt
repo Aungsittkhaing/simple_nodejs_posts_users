@@ -1,0 +1,70 @@
+const express = require('express');
+const app = express();
+
+app.get('/user', (req, res, next)=> {
+    res.status(200).json({name : 'ask', age : 23, job: 'node js developer'});
+    // res.json({name : 'ask', age : 23, job: 'node js developer'});
+});
+app.post('/user', (req, res, next)=> {
+    res.status(200).json({msg : 'Register successfully'});
+    // res.json({msg : 'Register successfully'});
+});
+app.patch('/user/:id/:name', (req, res, next)=>{
+    let id = req.params.id;
+    let name = req.params.name;
+    res.status(200).json({msg : `Edit user id is ${id} and name is ${name}`});
+});
+app.delete('/user/:id', (req, res, next)=> {
+    let id = req.params.id;
+    res.status(200).json({msg: `delete id is ${id}`});
+});
+app.listen(3000, console.log('server is running at port 3000'));
+
+
+let users = [
+    {id : 1, name : 'ask', age: 22,},
+    {id : 2, name : 'abm', age: 20,},
+    {id : 3, name : 'hhn', age: 21,},
+];
+app.get('/user', (req, res, next)=>{
+    res.json(users);
+});
+app.get('/user/:id', (req, res)=> {
+    let id = req.params.id;
+    let user = users.find(usr => usr.id == id);
+    if(user){
+        res.json({user})
+    }else{
+        res.json({msg : 'no user with that id sir'})
+    }
+});
+//create user
+app.post('/user', (req, res)=> {
+    let id = req.body.id;
+    let name = req.body.name;
+    let age = req.body.age;
+    let newUsers = {
+        id : id,
+        name : name,
+        age : age
+    };
+    users.push(newUsers);
+    res.json({ users });
+});
+//update user
+app.patch('/user/:id', (req, res)=> {
+    let id = req.params.id;
+    let editUser = users.find(usr => usr.id == id);
+    if(editUser){
+        editUser.name = req.body.name;
+        res.json(users);
+    }else{
+        res.json({ msg : "No user with that is sir"});
+    }
+});
+//delete user
+app.delete('/user/:id', (req, res) => {
+    let id = req.params.id;
+    users = users.filter(usr => usr.id != id);
+    res.json(users);
+});
